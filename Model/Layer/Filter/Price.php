@@ -3,9 +3,13 @@
 namespace SomethingDigital\AjaxLayeredNav\Model\Layer\Filter;
 
 use Magento\CatalogSearch\Model\Layer\Filter\Price as PriceBase;
+use SomethingDigital\AjaxLayeredNav\Model\ConfigInterface;
 
 class Price extends PriceBase
 {
+    protected $dataProvider = null;
+    protected $ajaxConfig = null;
+
     public function __construct(
         \Magento\Catalog\Model\Layer\Filter\ItemFactory $filterItemFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
@@ -17,6 +21,7 @@ class Price extends PriceBase
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
         \Magento\Catalog\Model\Layer\Filter\Dynamic\AlgorithmFactory $algorithmFactory,
         \Magento\Catalog\Model\Layer\Filter\DataProvider\PriceFactory $dataProviderFactory,
+        ConfigInterface $ajaxConfig,
         array $data = []
     ) {
         parent::__construct(
@@ -32,6 +37,8 @@ class Price extends PriceBase
             $dataProviderFactory,
             $data
         );
+        $this->dataProvider = $dataProviderFactory->create(['layer' => $this->getLayer()]);
+        $this->ajaxConfig = $ajaxConfig;
     }
 
     /**
@@ -43,36 +50,50 @@ class Price extends PriceBase
      */
     public function apply(\Magento\Framework\App\RequestInterface $request)
     {
-        /**
-         * Filter must be string: $fromPrice-$toPrice
-         */
-        $filter = $request->getParam($this->getRequestVar());
-        if (!$filter || is_array($filter)) {
+        if (!$this->ajaxConfig->enabled()) {
+            return parent::apply($request);
+        }
+
+        // The format will be $fromPrice-$toPrice,$fromPrice-$toPrice etc.
+        $filters = $request->getParam($this->getRequestVar());
+        if (empty($filters) || is_array($filters)) {
             return $this;
         }
 
-        $filterParams = explode(',', $filter);
-        $filter = $this->dataProvider->validateFilter($filterParams[0]);
-        if (!$filter) {
+        // Note: with multiselect, we ignore the "prior filters".
+        $filters = array_filter(explode(',', $filters));
+        if (empty($filters)) {
             return $this;
         }
 
-        $this->dataProvider->setInterval($filter);
-        $priorFilters = $this->dataProvider->getPriorFilters($filterParams);
-        if ($priorFilters) {
-            $this->dataProvider->setPriorIntervals($priorFilters);
+        $state = $this->getLayer()->getState();
+
+        $condition = [
+            'from' => [],
+            'to' => [],
+        ];
+        foreach ($filters as $filter) {
+            $filter = $this->dataProvider->validateFilter($filter);
+            if (!$filter) {
+                continue;
+            }
+
+            $this->dataProvider->setInterval($filter);
+            list ($from, $to) = $filter;
+
+            // Add each part to the array so we can add it at once (an OR.)
+            $condition['from'][] = $from;
+            $condition['to'][] = empty($to) || $from == $to ? $to : $to - self::PRICE_DELTA;
+
+            $state->addFilter(
+                $this->_createItem($this->_renderRangeLabel(empty($from) ? 0 : $from, $to), $filter)
+            );
         }
 
-        list($from, $to) = $filter;
+        $condition['from'] = implode(',', $condition['from']);
+        $condition['to'] = implode(',', $condition['to']);
 
-        $this->getLayer()->getProductCollection()->addFieldToFilter(
-            'price',
-            ['from' => $from, 'to' =>  empty($to) || $from == $to ? $to : $to - self::PRICE_DELTA]
-        );
-
-        $this->getLayer()->getState()->addFilter(
-            $this->_createItem($this->_renderRangeLabel(empty($from) ? 0 : $from, $to), $filter)
-        );
+        $this->getLayer()->getProductCollection()->addFieldToFilter('price', $condition);
 
         return $this;
     }
