@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/ObjectManager/etc/config.xsd">
+    <preference for="SomethingDigital\AjaxLayeredNav\Model\ConfigInterface" type="SomethingDigital\AjaxLayeredNav\Model\Config" />
+
     <!-- Preferences to convert layered models to multiselect. -->
     <preference for="Magento\CatalogSearch\Model\Layer\Filter\Attribute" type="SomethingDigital\AjaxLayeredNav\Model\Layer\Filter\Attribute" />
     <preference for="Magento\CatalogSearch\Model\Layer\Filter\Category" type="SomethingDigital\AjaxLayeredNav\Model\Layer\Filter\Category" />
