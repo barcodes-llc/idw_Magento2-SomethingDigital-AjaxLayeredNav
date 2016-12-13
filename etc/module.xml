@@ -3,6 +3,8 @@
     <module name="SomethingDigital_AjaxLayeredNav" setup_version="1.0.0">
         <sequence>
             <module name="Magento_Catalog" />
+            <module name="Magento_Elasticsearch" />
+            <module name="Magento_Solr" />
         </sequence>
     </module>
 </config>
