@@ -36,6 +36,9 @@ class Decimal extends DecimalBase
     /**
      * Apply price range filter
      *
+     * This override allows multiple ranges to be selected.
+     * The upper range is also corrected to match the displayed range.
+     *
      * @param \Magento\Framework\App\RequestInterface $request
      * @return $this
      * @throws \Magento\Framework\Exception\LocalizedException

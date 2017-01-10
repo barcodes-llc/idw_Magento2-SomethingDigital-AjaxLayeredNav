@@ -44,6 +44,8 @@ class Category extends CategoryBase
     /**
      * Apply attribute option filter to product collection
      *
+     * This override allows multiple subcategories to be filtered.
+     *
      * @param \Magento\Framework\App\RequestInterface $request
      * @return $this
      * @throws \Magento\Framework\Exception\LocalizedException

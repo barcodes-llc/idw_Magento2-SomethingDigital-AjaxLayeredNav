@@ -32,6 +32,8 @@ class Attribute extends AttributeBase
     /**
      * Apply attribute option filter to product collection
      *
+     * This override allows for multiple values to be added to the filter.
+     *
      * @param \Magento\Framework\App\RequestInterface $request
      * @return $this
      * @throws \Magento\Framework\Exception\LocalizedException

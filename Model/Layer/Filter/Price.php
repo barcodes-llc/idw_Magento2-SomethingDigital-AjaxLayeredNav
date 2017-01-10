@@ -44,6 +44,8 @@ class Price extends PriceBase
     /**
      * Apply price range filter
      *
+     * This override allows multiple ranges to be selected.
+     *
      * @param \Magento\Framework\App\RequestInterface $request
      * @return $this
      * @SuppressWarnings(PHPMD.NPathComplexity)
