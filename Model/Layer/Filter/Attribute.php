@@ -57,7 +57,7 @@ class Attribute extends AttributeBase
         /** @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $productCollection */
         $productCollection = $this->getLayer()
             ->getProductCollection();
-        $productCollection->addFieldToFilter($attribute->getAttributeCode(), ['in' => $attributeValues]);
+        $productCollection->addFieldToFilter($attribute->getAttributeCode(), $attributeValues);
 
         $state = $this->getLayer()->getState();
         foreach ($attributeValues as $attributeValue) {
