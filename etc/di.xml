@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/ObjectManager/etc/config.xsd">
+    <preference for="SomethingDigital\AjaxLayeredNav\Model\ConfigInterface" type="SomethingDigital\AjaxLayeredNav\Model\Config" />
+
+    <!-- Preferences to convert layered models to multiselect. -->
+    <preference for="Magento\CatalogSearch\Model\Layer\Filter\Attribute" type="SomethingDigital\AjaxLayeredNav\Model\Layer\Filter\Attribute" />
+    <preference for="Magento\CatalogSearch\Model\Layer\Filter\Category" type="SomethingDigital\AjaxLayeredNav\Model\Layer\Filter\Category" />
+    <preference for="Magento\CatalogSearch\Model\Layer\Filter\Decimal" type="SomethingDigital\AjaxLayeredNav\Model\Layer\Filter\Decimal" />
+    <preference for="Magento\CatalogSearch\Model\Layer\Filter\Price" type="SomethingDigital\AjaxLayeredNav\Model\Layer\Filter\Price" />
+
+    <type name="Magento\Framework\Search\Adapter\Mysql\Filter\Builder\Range">
+        <plugin name="sd_ajaxlayerednav-range" type="SomethingDigital\AjaxLayeredNav\Model\Plugin\Mysql\RangeBuilderPlugin" />
+    </type>
+    <type name="Magento\Elasticsearch\SearchAdapter\Filter\Builder\Range">
+        <plugin name="sd_ajaxlayerednav-range" type="SomethingDigital\AjaxLayeredNav\Model\Plugin\Elasticsearch\RangeBuilderPlugin" />
+    </type>
+    <type name="Magento\Solr\SearchAdapter\Filter\Builder\Range">
+        <plugin name="sd_ajaxlayerednav-range" type="SomethingDigital\AjaxLayeredNav\Model\Plugin\Solr\RangeBuilderPlugin" />
+    </type>
+</config>
