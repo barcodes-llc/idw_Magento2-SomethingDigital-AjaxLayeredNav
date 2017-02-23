@@ -23,10 +23,9 @@ class RangeBuilderPlugin
      * @param Range $subject Range filter builder.
      * @param callable $proceed Actual method or next plugin.
      * @param RequestFilterInterface $filter Filter information.
-     * @param bool $isNegation Whether filter is being negated.
      * @return array
      */
-    public function aroundBuildFilter(Range $subject, $proceed, RequestFilterInterface $filter, $isNegation)
+    public function aroundBuildFilter(Range $subject, $proceed, RequestFilterInterface $filter)
     {
         // Note that this may call $proceed multiple times.
         if ($filter instanceof RangeFilterRequest && $this->ajaxConfig->enabled()) {
@@ -35,29 +34,29 @@ class RangeBuilderPlugin
 
             // As long as they match, we can pair them up - let's go.
             if (count($froms) == count($tos) && count($froms) > 1) {
-                return $this->buildFilterByParts($proceed, $filter, $froms, $tos, $isNegation);
+                return $this->buildFilterByParts($proceed, $filter, $froms, $tos);
             }
         }
 
-        return $proceed($filter, $isNegation);
+        return $proceed($filter);
     }
 
-    protected function buildFilterByParts($proceed, RangeFilterRequest $filter, array $froms, array $tos, $isNegation)
+    protected function buildFilterByParts($proceed, RangeFilterRequest $filter, array $froms, array $tos)
     {
         $parts = [];
         foreach ($froms as $k => $from) {
             $to = $tos[$k];
 
             $partFilter = new RangeFilterRequest($filter->getName(), $filter->getField(), $from, $to);
-            $parts[] = $proceed($partFilter, $isNegation);
+            $parts[] = $proceed($partFilter);
         }
 
         // Okay, now we have each part of the multiselect, time to combine to an OR.
-        return [
+        return [[
             'bool' => [
                 Builder::QUERY_CONDITION_SHOULD => $parts,
                 'minimum_should_match' => 1,
-            ],
+            ]],
         ];
     }
 }
