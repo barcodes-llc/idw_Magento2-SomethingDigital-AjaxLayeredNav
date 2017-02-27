@@ -64,17 +64,21 @@ class Category extends CategoryBase
         if (empty($categoryIds)) {
             return $this;
         }
-
+        $categories = [];
         // TODO: This ultimately results in a looped category load, improve.
         foreach ($categoryIds as $categoryId) {
             $this->dataProvider->setCategoryId($categoryId);
             $category = $this->dataProvider->getCategory();
-            if ($request->getParam('id') != $category->getId() && $this->dataProvider->isValid()) {
+            if (!$this->dataProvider->isValid()) {
+                continue;
+            }
+            $categories[$categoryId] = $category;
+            if ($request->getParam('id') != $category->getId()) {
                 $this->getLayer()->getState()->addFilter($this->_createItem($category->getName(), $categoryId));
             }
         }
 
-        if (count($categoryIds) > 1) {
+        if (count($categories) > 1) {
             // Set the current category filter to the current category.
             // This gives the most predictable price filtering.
             $this->coreRegistry->unregister('current_category_filter');
@@ -82,7 +86,11 @@ class Category extends CategoryBase
             $this->coreRegistry->register('current_category_filter', $category);
         }
 
-        $this->getLayer()->getProductCollection()->addCategoriesFilter(['in' => $categoryIds]);
+        if (count($categories) == 1) {
+            $this->getLayer()->getProductCollection()->addCategoryFilter(current($categories));
+        } elseif (count($categories) > 1) {
+            $this->getLayer()->getProductCollection()->addCategoriesFilter(['in' => array_keys($categories)]);
+        }
 
         return $this;
     }
