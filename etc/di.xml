@@ -23,4 +23,5 @@
     <type name="Magento\CatalogSearch\Model\Adapter\Mysql\Filter\Preprocessor">
         <plugin name="sd_ajaxlayerednav" type="SomethingDigital\AjaxLayeredNav\Model\Plugin\Mysql\Adapter\Filter\PreprocessorPlugin" />
     </type>
+    <preference for="Magento\Search\Api\SearchInterface" type="SomethingDigital\AjaxLayeredNav\Model\Search\Search"/>
 </config>
