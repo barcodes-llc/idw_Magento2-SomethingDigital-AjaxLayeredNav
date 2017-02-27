@@ -5,14 +5,17 @@ namespace SomethingDigital\AjaxLayeredNav\Model\Search;
 use Magento\Framework\Api\Search\SearchInterface;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
 use Magento\Framework\App\ScopeResolverInterface;
-use Magento\Framework\Search\Request\Builder;
+use SomethingDigital\AjaxLayeredNav\Model\Search\Request\BuilderFactory;
+use Magento\Framework\Search\SearchEngineInterface;
+use Magento\Framework\Search\SearchResponseBuilder;
+use Magento\Framework\Search\ResponseInterface;
 
 class Search implements SearchInterface
 {
     /**
-     * @var Builder
+     * @var BuilderFactory
      */
-    private $requestBuilder;
+    protected $requestBuilderFactory;
 
     /**
      * @var ScopeResolverInterface
@@ -30,18 +33,18 @@ class Search implements SearchInterface
     private $searchResponseBuilder;
 
     /**
-     * @param Builder $requestBuilder
+     * @param BuilderFactory $requestBuilderFactory
      * @param ScopeResolverInterface $scopeResolver
      * @param SearchEngineInterface $searchEngine
      * @param SearchResponseBuilder $searchResponseBuilder
      */
     public function __construct(
-        Builder $requestBuilder,
+        BuilderFactory $requestBuilderFactory,
         ScopeResolverInterface $scopeResolver,
         SearchEngineInterface $searchEngine,
         SearchResponseBuilder $searchResponseBuilder
     ) {
-        $this->requestBuilder = $requestBuilder;
+        $this->requestBuilderFactory = $requestBuilderFactory;
         $this->scopeResolver = $scopeResolver;
         $this->searchEngine = $searchEngine;
         $this->searchResponseBuilder = $searchResponseBuilder;
@@ -52,10 +55,24 @@ class Search implements SearchInterface
      */
     public function search(SearchCriteriaInterface $searchCriteria)
     {
-        $this->requestBuilder->setRequestName($searchCriteria->getRequestName());
+        $generalSearchResponse = $this->getGeneralSearchResponse($searchCriteria);
+        return $this->searchResponseBuilder->build($searchResponse)
+            ->setSearchCriteria($searchCriteria);
+    }
+
+    /**
+     * Prepare search response for current request
+     *
+     * @param SearchCriteriaInterface $searchCriteria
+     * @return ResponseInterface
+     */
+    protected function getGeneralSearchResponse(SearchCriteriaInterface $searchCriteria)
+    {
+        $requestBuilder = $this->requestBuilderFactory->create();
+        $requestBuilder->setRequestName($searchCriteria->getRequestName());
 
         $scope = $this->scopeResolver->getScope()->getId();
-        $this->requestBuilder->bindDimension('scope', $scope);
+        $requestBuilder->bindDimension('scope', $scope);
 
         foreach ($searchCriteria->getFilterGroups() as $filterGroup) {
             foreach ($filterGroup->getFilters() as $filter) {
@@ -63,13 +80,10 @@ class Search implements SearchInterface
             }
         }
 
-        $this->requestBuilder->setFrom($searchCriteria->getCurrentPage() * $searchCriteria->getPageSize());
-        $this->requestBuilder->setSize($searchCriteria->getPageSize());
-        $request = $this->requestBuilder->create();
-        $searchResponse = $this->searchEngine->search($request);
-
-        return $this->searchResponseBuilder->build($searchResponse)
-            ->setSearchCriteria($searchCriteria);
+        $requestBuilder->setFrom($searchCriteria->getCurrentPage() * $searchCriteria->getPageSize());
+        $requestBuilder->setSize($searchCriteria->getPageSize());
+        $generalRequest = $requestBuilder->create();
+        return $this->searchEngine->search($generalRequest);
     }
 
     /**
