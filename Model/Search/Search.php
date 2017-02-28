@@ -11,6 +11,7 @@ use Magento\Framework\Search\SearchResponseBuilder;
 use Magento\Framework\Search\ResponseInterface;
 use Magento\Framework\Search\Response\AggregationFactory;
 use Magento\Framework\Search\Response\QueryResponseFactory;
+use SomethingDigital\AjaxLayeredNav\Model\ConfigInterface;
 
 class Search implements SearchInterface
 {
@@ -45,6 +46,11 @@ class Search implements SearchInterface
     protected $queryResponseFactory;
 
     /**
+     * @var ConfigInterface
+     */
+    protected $ajaxConfig;
+
+    /**
      * @param BuilderFactory $requestBuilderFactory
      * @param ScopeResolverInterface $scopeResolver
      * @param SearchEngineInterface $searchEngine
@@ -58,7 +64,8 @@ class Search implements SearchInterface
         SearchEngineInterface $searchEngine,
         SearchResponseBuilder $searchResponseBuilder,
         AggregationFactory $aggregationFactory,
-        QueryResponseFactory $queryResponseFactory
+        QueryResponseFactory $queryResponseFactory,
+        ConfigInterface $ajaxConfig
     ) {
         $this->requestBuilderFactory = $requestBuilderFactory;
         $this->scopeResolver = $scopeResolver;
@@ -66,6 +73,7 @@ class Search implements SearchInterface
         $this->searchResponseBuilder = $searchResponseBuilder;
         $this->aggregationFactory = $aggregationFactory;
         $this->queryResponseFactory = $queryResponseFactory;
+        $this->ajaxConfig = $ajaxConfig;
     }
 
     /**
@@ -73,10 +81,13 @@ class Search implements SearchInterface
      */
     public function search(SearchCriteriaInterface $searchCriteria)
     {
-        $searchResponse = $this->combineResponse(
-            $this->getGeneralSearchResponse($searchCriteria), 
-            $this->getPartialSearchResponses($searchCriteria)
-        );
+        $searchResponse = $this->getGeneralSearchResponse($searchCriteria);
+        if ($this->ajaxConfig->enabled()) {
+            $searchResponse = $this->combineResponse(
+                $searchResponse,
+                $this->getPartialSearchResponses($searchCriteria)
+            );
+        }
         return $this->searchResponseBuilder->build($searchResponse)
             ->setSearchCriteria($searchCriteria);
     }
