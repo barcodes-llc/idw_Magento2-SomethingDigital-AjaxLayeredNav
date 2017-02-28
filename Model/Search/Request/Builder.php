@@ -56,9 +56,14 @@ class Builder extends BuilderBase
     /**
      * Create request object
      *
+     * Creates general full request.
+     * In case $currentFilterField is not null, method will create short request object for retrieving facet options
+     * for current filter only
+     *
+     * @param string $currentFilterField
      * @return RequestInterface
      */
-    public function create()
+    public function create($currentFilterField = null)
     {
         if (!isset($this->data['requestName'])) {
             throw new \InvalidArgumentException("Request name not defined.");
@@ -68,6 +73,20 @@ class Builder extends BuilderBase
         $data = $this->config->get($requestName);
         if ($data === null) {
             throw new NonExistingRequestNameException(new Phrase("Request name '%1' doesn't exist.", [$requestName]));
+        }
+
+        if ($currentFilterField) {
+            // Update list of requested aggregations (buckets with facet options) to remove all except bucket for
+            // current field
+            $aggregations = $data['aggregations'];
+            $refinedAggregations = [];
+            foreach ($aggregations as $aggregationName => $aggregation) {
+                if ($aggregation['field'] != $currentFilterField) {
+                    continue;
+                }
+                $refinedAggregations[$aggregationName] = $aggregation;
+            }
+            $data['aggregations'] = $refinedAggregations;
         }
 
         $data = $this->binder->bind($data, $this->data);
