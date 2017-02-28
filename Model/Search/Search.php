@@ -9,6 +9,8 @@ use SomethingDigital\AjaxLayeredNav\Model\Search\Request\BuilderFactory;
 use Magento\Framework\Search\SearchEngineInterface;
 use Magento\Framework\Search\SearchResponseBuilder;
 use Magento\Framework\Search\ResponseInterface;
+use Magento\Framework\Search\Response\AggregationFactory;
+use Magento\Framework\Search\Response\QueryResponseFactory;
 
 class Search implements SearchInterface
 {
@@ -33,21 +35,37 @@ class Search implements SearchInterface
     protected $searchResponseBuilder;
 
     /**
+     * @var AggregationFactory
+     */
+    protected $aggregationFactory;
+
+    /**
+     * @var QueryResponse
+     */
+    protected $queryResponseFactory;
+
+    /**
      * @param BuilderFactory $requestBuilderFactory
      * @param ScopeResolverInterface $scopeResolver
      * @param SearchEngineInterface $searchEngine
      * @param SearchResponseBuilder $searchResponseBuilder
+     * @param AggregationFactory $aggregationFactory
+     * @param QueryResponseFactory $queryResponseFactory
      */
     public function __construct(
         BuilderFactory $requestBuilderFactory,
         ScopeResolverInterface $scopeResolver,
         SearchEngineInterface $searchEngine,
-        SearchResponseBuilder $searchResponseBuilder
+        SearchResponseBuilder $searchResponseBuilder,
+        AggregationFactory $aggregationFactory,
+        QueryResponseFactory $queryResponseFactory
     ) {
         $this->requestBuilderFactory = $requestBuilderFactory;
         $this->scopeResolver = $scopeResolver;
         $this->searchEngine = $searchEngine;
         $this->searchResponseBuilder = $searchResponseBuilder;
+        $this->aggregationFactory = $aggregationFactory;
+        $this->queryResponseFactory = $queryResponseFactory;
     }
 
     /**
@@ -55,7 +73,10 @@ class Search implements SearchInterface
      */
     public function search(SearchCriteriaInterface $searchCriteria)
     {
-        $generalSearchResponse = $this->getGeneralSearchResponse($searchCriteria);
+        $searchResponse = $this->combineResponse(
+            $this->getGeneralSearchResponse($searchCriteria), 
+            $this->getPartialSearchResponses($searchCriteria)
+        );
         return $this->searchResponseBuilder->build($searchResponse)
             ->setSearchCriteria($searchCriteria);
     }
@@ -76,7 +97,7 @@ class Search implements SearchInterface
 
         foreach ($searchCriteria->getFilterGroups() as $filterGroup) {
             foreach ($filterGroup->getFilters() as $filter) {
-                $this->addFieldToFilter($filter->getField(), $filter->getValue());
+                $this->addFieldToRequestBuilder($requestBuilder, $filter->getField(), $filter->getValue());
             }
         }
 
@@ -87,10 +108,10 @@ class Search implements SearchInterface
     }
 
     /**
-     * Prepare partial search responses for each active filter
+     * Prepare partial search responses for each active applied filter
      *
-     * Send search request for each active filter to get proper facet data for that filter. Each request for active filter
-     * includes all other filters except current. 
+     * Send search request for each active applied filter to get proper facet data for that filter. Each request for
+     * active applied filter includes all other filters except current. 
      *
      * @param SearchCriteriaInterface $searchCriteria
      * @return array
@@ -130,7 +151,7 @@ class Search implements SearchInterface
         }
 
         $partialSearchResponses = [];
-        // prepare partial search responses for each active filter
+        // prepare partial search responses for each active applied filter
         foreach ($filterFileldNames as $currentFilterField) {
             if (in_array($currentFilterField, $permanentFilterFields)) {
                 continue;
@@ -189,25 +210,32 @@ class Search implements SearchInterface
     }
 
     /**
-     * Apply attribute filter to facet collection
+     * Update given $generalSearchResponse with correct facet options from $partialSearchResponses
      *
-     * @param string $field
-     * @param string|array|null $condition
-     * @return $this
+     * "Merge" filter buckets from partial search response into general search response
+     *
+     * @param \Magento\Framework\Search\Response\QueryResponse $generalSearchResponse
+     * @param array $partialSearchResponses
+     * @return \Magento\Framework\Search\Response\QueryResponse
      */
-    protected function addFieldToFilter($field, $condition = null)
+    protected function combineResponse($generalSearchResponse, $partialSearchResponses)
     {
-        if (!is_array($condition) || !in_array(key($condition), ['from', 'to'], true)) {
-            $this->requestBuilder->bind($field, $condition);
-        } else {
-            if (!empty($condition['from'])) {
-                $this->requestBuilder->bind("{$field}.from", $condition['from']);
-            }
-            if (!empty($condition['to'])) {
-                $this->requestBuilder->bind("{$field}.to", $condition['to']);
+        $documents = iterator_to_array($generalSearchResponse);
+        $buckets = $generalSearchResponse->getAggregations()->getBuckets();
+        if (!is_array($buckets)) {
+            $buckets = [];
+        }
+
+        foreach ($partialSearchResponses as $partialSearchResponse) {
+            foreach ($partialSearchResponse->getAggregations()->getBuckets() as $bucketName => $partialResponseBucket) {
+                $buckets[$bucketName] = $partialResponseBucket;
             }
         }
 
-        return $this;
+        $aggregations = $this->aggregationFactory->create(['buckets' => $buckets]);
+        return $this->queryResponseFactory->create([
+            'documents' => $documents,
+            'aggregations' => $aggregations
+        ]);
     }
 }
