@@ -2,12 +2,14 @@
 
 namespace SomethingDigital\AjaxLayeredNav\Model\Search\Request;
 
-use Magento\Framework\Search\Request\Builder as BuilderBase;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Phrase;
 use Magento\Framework\Search\RequestInterface;
+use Magento\Framework\Search\Request\Config;
+use Magento\Framework\Search\Request\Binder;
+use Magento\Framework\Search\Request\Cleaner;
 
-class Builder extends BuilderBase
+class Builder
 {
     /**
      * @var ObjectManagerInterface
@@ -36,6 +38,68 @@ class Builder extends BuilderBase
      * @var Cleaner
      */
     private $cleaner;
+
+    /**
+     * Set request name
+     *
+     * @param string $requestName
+     * @return $this
+     */
+    public function setRequestName($requestName)
+    {
+        $this->data['requestName'] = $requestName;
+        return $this;
+    }
+
+    /**
+     * Set size
+     *
+     * @param int $size
+     * @return $this
+     */
+    public function setSize($size)
+    {
+        $this->data['size'] = $size;
+        return $this;
+    }
+
+    /**
+     * Set from
+     *
+     * @param int $from
+     * @return $this
+     */
+    public function setFrom($from)
+    {
+        $this->data['from'] = $from;
+        return $this;
+    }
+
+    /**
+     * Bind dimension data by name
+     *
+     * @param string $name
+     * @param string $value
+     * @return $this
+     */
+    public function bindDimension($name, $value)
+    {
+        $this->data['dimensions'][$name] = $value;
+        return $this;
+    }
+
+    /**
+     * Bind data to placeholder
+     *
+     * @param string $placeholder
+     * @param mixed $value
+     * @return $this
+     */
+    public function bind($placeholder, $value)
+    {
+        $this->data['placeholder']['$' . $placeholder . '$'] = $value;
+        return $this;
+    }
 
     /**
      * Request Builder constructor
