@@ -1,9 +1,4 @@
 <?php
-/**
- * Copyright © 2016 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
-
 // @codingStandardsIgnoreFile
 ?>
 <?php
@@ -54,4 +49,19 @@
             <?php endif; ?>
         </div>
     </div>
+    <script>
+        require([
+            'jquery'
+        ], function ($) {
+            $('#layered-filter-block li.item .filter-item-checkbox').each(function() {
+                $this = $(this);
+                var href = $this.data('href');
+                if (!$this.attr('disabled')) {
+                    $this.change(function(){
+                        window.location.href = href;
+                    });
+                }
+            });
+        });
+    </script>
 <?php endif; ?>

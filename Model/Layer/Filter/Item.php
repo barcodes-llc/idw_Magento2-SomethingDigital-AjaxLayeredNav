@@ -106,4 +106,35 @@ class Item extends ItemBase
         $params['_escape'] = true;
         return $this->_url->getUrl('*/*/*', $params);
     }
+
+    /**
+     * Check whether current item is active
+     *
+     * @return boolean
+     */
+    public function getIsActive()
+    {
+        $active = false;
+        $value = $this->request->getParam($this->getFilter()->getRequestVar());
+        if ($value) {
+            $filterValueArray = explode(',', $value);
+            foreach ($filterValueArray as $key => $filterValue) {
+                if ($filterValue == $this->getValue()) {
+                    $active = true;
+                    break;
+                }
+            }
+        }
+        return $active;
+    }
+
+    /**
+     * Get unique item id
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->getFilter()->getRequestVar() . $this->getValue();
+    }
 }
