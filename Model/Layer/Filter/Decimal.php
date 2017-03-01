@@ -86,4 +86,22 @@ class Decimal extends DecimalBase
 
         return $this;
     }
+
+    /**
+     * Checks whether the option reduces the number of results
+     *
+     * Override to display all options. Customer must be able to select one more option(s) in addition to currently
+     * selected, so all options must be there.
+     *
+     * @param type $optionCount
+     * @param type $totalSize
+     * @return boolean
+     */
+    protected function isOptionReducesResults($optionCount, $totalSize)
+    {
+        if (!$this->ajaxConfig->enabled()) {
+            return parent::isOptionReducesResults($optionCount, $totalSize);
+        }
+        return true;
+    }
 }
