@@ -1,0 +1,38 @@
+<?php
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * Template for filter items block
+ *
+ * @var $block \Magento\LayeredNavigation\Block\Navigation\FilterRenderer
+ */
+?>
+
+<ol class="items">
+    <?php foreach ($filterItems as $filterItem): ?>
+        <li class="item">
+            <label for="<?php echo $filterItem->getId() ?>">
+            <?php if ($filterItem->getCount() > 0): ?>
+                <input class="filter-item-checkbox" name="<?php echo $filterItem->getId() ?>" id="<?php echo $filterItem->getId() ?>" data-href="<?php echo $block->escapeUrl($filterItem->getUrl()) ?>" type="checkbox"<?php if ($filterItem->getIsActive()): ?> checked="checked"<?php endif; ?>/>
+                <?php /* @escapeNotVerified */ echo $filterItem->getLabel() ?>
+                <?php if (!$filterItem->getIsActive()): ?>
+                    <?php if ($this->helper('\Magento\Catalog\Helper\Data')->shouldDisplayProductCountOnLayer()): ?>
+                        <span class="count"><?php /* @escapeNotVerified */ echo $filterItem->getCount()?><span class="filter-count-label">
+                            <?php if ($filterItem->getCount() == 1):?> <?php /* @escapeNotVerified */ echo __('item')?><?php else:?> <?php /* @escapeNotVerified */ echo __('items') ?><?php endif;?></span></span>
+                    <?php endif; ?>
+                <?php endif; ?>
+            <?php else:?>
+                <input class="filter-item-checkbox" name="<?php echo $filterItem->getId() ?>" id="<?php echo $filterItem->getId() ?>" type="checkbox" disabled="disabled"/>
+                <?php /* @escapeNotVerified */ echo $filterItem->getLabel() ?>
+                <?php if ($this->helper('\Magento\Catalog\Helper\Data')->shouldDisplayProductCountOnLayer()): ?>
+                    <span class="count"><?php /* @escapeNotVerified */ echo $filterItem->getCount()?><span class="filter-count-label">
+                        <?php if ($filterItem->getCount() == 1):?><?php /* @escapeNotVerified */ echo __('item')?><?php else:?><?php /* @escapeNotVerified */ echo __('items') ?><?php endif;?></span></span>
+                <?php endif; ?>
+            <?php endif; ?>
+            </label>
+        </li>
+    <?php endforeach ?>
+</ol>

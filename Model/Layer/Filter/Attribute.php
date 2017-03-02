@@ -57,7 +57,7 @@ class Attribute extends AttributeBase
         /** @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $productCollection */
         $productCollection = $this->getLayer()
             ->getProductCollection();
-        $productCollection->addFieldToFilter($attribute->getAttributeCode(), ['in' => $attributeValues]);
+        $productCollection->addFieldToFilter($attribute->getAttributeCode(), $attributeValues);
 
         $state = $this->getLayer()->getState();
         foreach ($attributeValues as $attributeValue) {
@@ -66,5 +66,23 @@ class Attribute extends AttributeBase
         }
 
         return $this;
+    }
+
+    /**
+     * Checks whether the option reduces the number of results
+     *
+     * Override to display all options. Customer must be able to select one more option(s) in addition to currently
+     * selected, so all options must be there.
+     *
+     * @param type $optionCount
+     * @param type $totalSize
+     * @return boolean
+     */
+    protected function isOptionReducesResults($optionCount, $totalSize)
+    {
+        if (!$this->ajaxConfig->enabled()) {
+            return parent::isOptionReducesResults($optionCount, $totalSize);
+        }
+        return true;
     }
 }

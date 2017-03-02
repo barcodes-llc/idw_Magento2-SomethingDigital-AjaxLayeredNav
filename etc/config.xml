@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <catalog>
+            <layered_navigation>
+                <enable_multiselect_layer>0</enable_multiselect_layer>
+            </layered_navigation>
+        </catalog>
+    </default>
+</config>
