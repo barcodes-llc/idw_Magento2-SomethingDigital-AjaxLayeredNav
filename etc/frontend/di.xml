@@ -3,4 +3,7 @@
     <type name="Magento\Catalog\Controller\Category\View">
         <plugin name="sd_ajaxlayerednav" type="SomethingDigital\AjaxLayeredNav\Controller\CatalogCategoryViewPlugin" />
     </type>
+    <type name="Magento\CatalogSearch\Controller\Result\Index">
+        <plugin name="sd_ajaxlayerednav" type="SomethingDigital\AjaxLayeredNav\Controller\CatalogSearchResultIndexPlugin" />
+    </type>
 </config>
