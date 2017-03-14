@@ -9,4 +9,7 @@
     <type name="Magento\Catalog\Block\Product\ListProduct">
         <plugin name="sd_ajaxlayerednav" type="SomethingDigital\AjaxLayeredNav\Block\ListProductPlugin" />
     </type>
+    <type name="Magento\Catalog\Block\Product\ListProduct\Toolbar">
+        <plugin name="sd_ajaxlayerednav" type="SomethingDigital\AjaxLayeredNav\Block\ListProductToolbarPlugin" />
+    </type>
 </config>

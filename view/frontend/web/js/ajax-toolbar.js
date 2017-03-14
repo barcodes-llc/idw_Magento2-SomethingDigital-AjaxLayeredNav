@@ -2,15 +2,21 @@
 define([
     "jquery",
     "jquery/ui",
-    "productListToolbarForm"
-], function($, ui, toolbar) {
+    "productListToolbarForm",
+    "SomethingDigital_AjaxLayeredNav/js/ajax-list"
+], function($, ui, toolbar, ajaxList) {
     $.widget('mage.productListAjaxToolbarForm', $.mage.productListToolbarForm, {
         _bind: function (element, paramName, defaultValue) {
+            if (element.data('bound')) {
+                // avoid double binding (original magento behavior)
+                return;
+            }
             if (element.is("select")) {
                 element.on('change', {paramName: paramName, default: defaultValue}, $.proxy(this._processSelect, this));
             } else {
                 element.on('click', {paramName: paramName, default: defaultValue}, $.proxy(this._processLink, this));
             }
+            element.data('bound', true);
         },
         changeUrl: function (paramName, paramValue, defaultValue) {
             var decode = window.decodeURIComponent;
@@ -31,7 +37,7 @@ define([
             }
             paramData = $.param(paramData);
 
-            location.href = baseUrl + (paramData.length ? '?' + paramData : '');
+            ajaxList.updateContent(baseUrl + (paramData.length ? '?' + paramData : ''));
         }
     });
 
