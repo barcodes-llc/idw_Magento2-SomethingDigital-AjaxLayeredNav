@@ -12,4 +12,11 @@
     <type name="Magento\Catalog\Block\Product\ListProduct\Toolbar">
         <plugin name="sd_ajaxlayerednav" type="SomethingDigital\AjaxLayeredNav\Block\ListProductToolbarPlugin" />
     </type>
+    <type name="Magento\Framework\Url\ModifierComposite">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="sd_ajaxlayerednav" xsi:type="object">SomethingDigital\AjaxLayeredNav\Model\Url\IsAjaxModifier</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
