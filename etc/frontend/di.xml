@@ -6,4 +6,7 @@
     <type name="Magento\CatalogSearch\Controller\Result\Index">
         <plugin name="sd_ajaxlayerednav" type="SomethingDigital\AjaxLayeredNav\Controller\CatalogSearchResultIndexPlugin" />
     </type>
+    <type name="Magento\Catalog\Block\Product\ListProduct">
+        <plugin name="sd_ajaxlayerednav" type="SomethingDigital\AjaxLayeredNav\Block\ListProductPlugin" />
+    </type>
 </config>
