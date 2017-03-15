@@ -43,7 +43,7 @@ class CatalogCategoryViewPlugin
     ) {
         $page = $proceed();
         $request = $subject->getRequest();
-        if (!$this->ajaxConfig->enabled() || !$request->isAjax() || !($page instanceof \Magento\Framework\View\Result\Page)) {
+        if (!$this->ajaxConfig->enabled() || !$request->getParam('is_ajax') || !($page instanceof \Magento\Framework\View\Result\Page)) {
             return $page;
         }
         $productList = $page->getLayout()->getBlock('category.products.list')->toHtml();

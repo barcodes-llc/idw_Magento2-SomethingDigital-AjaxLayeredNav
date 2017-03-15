@@ -92,7 +92,7 @@ class CatalogSearchResultIndexPlugin
         \Closure $proceed
     ) {
         $request = $subject->getRequest();
-        if (!$this->ajaxConfig->enabled() || !$request->isAjax()) {
+        if (!$this->ajaxConfig->enabled() || !$request->getParam('is_ajax')) {
             $proceed();
             return;
         }
