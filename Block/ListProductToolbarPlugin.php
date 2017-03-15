@@ -5,7 +5,7 @@ namespace SomethingDigital\AjaxLayeredNav\Block;
 use Magento\Catalog\Block\Product\ProductList\Toolbar;
 use SomethingDigital\AjaxLayeredNav\Model\ConfigInterface;
 
-class ListProductPlugin
+class ListProductToolbarPlugin
 {
     /**
      * @var ConfigInterface
@@ -33,7 +33,7 @@ class ListProductPlugin
         if (!$this->ajaxConfig->enabled()) {
             return $result;
         }
-        $data = json_decode($result);
+        $data = json_decode($result, true);
         if (isset($data['productListToolbarForm'])) {
             return json_encode(['productListAjaxToolbarForm' => $data['productListToolbarForm']]);
         }
