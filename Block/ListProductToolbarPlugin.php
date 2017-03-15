@@ -35,7 +35,7 @@ class ListProductToolbarPlugin
         }
         $data = json_decode($result, true);
         if (isset($data['productListToolbarForm'])) {
-            return json_encode(['productListAjaxToolbarForm' => $data['productListToolbarForm']]);
+            return json_encode(['sdProductListAjaxToolbarForm' => $data['productListToolbarForm']]);
         }
         return $result;
     }

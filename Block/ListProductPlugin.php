@@ -33,6 +33,6 @@ class ListProductPlugin
         if (!$this->ajaxConfig->enabled()) {
             return $result;
         }
-        return '<div id="product-listing" data-mage-init=\'{"ajaxListBinder":{}}\'>' . $result . '</div>';
+        return '<div id="product-listing" data-mage-init=\'{"sdAjaxListBinder":{}}\'>' . $result . '</div>';
     }
 }

@@ -3,9 +3,9 @@ define([
     "jquery",
     "jquery/ui",
     "productListToolbarForm",
-    "SomethingDigital_AjaxLayeredNav/js/ajax-list"
+    "sdAjaxList"
 ], function($, ui, toolbar, ajaxList) {
-    $.widget('mage.productListAjaxToolbarForm', $.mage.productListToolbarForm, {
+    $.widget('mage.sdProductListAjaxToolbarForm', $.mage.productListToolbarForm, {
         _bind: function (element, paramName, defaultValue) {
             if (element.data('bound')) {
                 // avoid double binding (original magento behavior)
@@ -41,5 +41,5 @@ define([
         }
     });
 
-    return $.mage.productListAjaxToolbarForm;
+    return $.mage.sdProductListAjaxToolbarForm;
 });

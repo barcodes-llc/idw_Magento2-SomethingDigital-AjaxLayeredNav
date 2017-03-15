@@ -2,7 +2,7 @@
 define([
     'jquery',
     'jquery/ui',
-    'SomethingDigital_AjaxLayeredNav/js/ajax-list'
+    'sdAjaxList'
 ], function($, ui, ajaxList) {
     "use strict";
     function init(config, $loader) {
