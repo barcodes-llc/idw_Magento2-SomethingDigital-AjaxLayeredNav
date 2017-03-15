@@ -48,6 +48,8 @@ define([
                     if (data.product_list && data.filters) {
                         $('#product-listing').html($('<div>').html(data.product_list).find('#product-listing').html());
                         $('#layered-filter-block').html($('<div>').html(data.filters).find('#layered-filter-block').html());
+                        // custom event after updating product list content via ajax
+                        $(document).trigger('ajaxProductListUpdated');
                         $('#layered-filter-block').trigger('contentUpdated');
                     } else {
                         // show error or refresh page
