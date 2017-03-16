@@ -41,9 +41,7 @@ define([
                 url: url,
                 data: data,
                 cache: true,
-                complete: function() {
-                    // hide loader
-                },
+                showLoader: true,
                 success: function(data) {
                     if (data.product_list && data.filters) {
                         $('#product-listing').html($('<div>').html(data.product_list).find('#product-listing').html());
@@ -52,11 +50,11 @@ define([
                         $(document).trigger('ajaxProductListUpdated');
                         $('#layered-filter-block').trigger('contentUpdated');
                     } else {
-                        // show error or refresh page
+                        location.reload();
                     }
                 },
                 error: function() {
-                    // refresh page
+                    location.reload();
                 }
             });
         }
