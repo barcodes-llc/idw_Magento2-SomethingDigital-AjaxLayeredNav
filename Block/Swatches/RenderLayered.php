@@ -9,6 +9,13 @@ use Magento\Eav\Model\Entity\Attribute\Option;
 class RenderLayered extends RenderLayeredBase
 {
     /**
+     * Path to template file.
+     *
+     * @var string
+     */
+    protected $_template = 'SomethingDigital_AjaxLayeredNav::layer/swatches/renderer.phtml';
+
+    /**
      * Prepare filter option data
      *
      * Override to mark selected filter options with class 'selected' and use correct URL which support multiselecting.
