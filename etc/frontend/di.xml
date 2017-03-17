@@ -19,4 +19,8 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\LayeredNavigation\Block\Navigation\FilterRenderer">
+        <plugin name="swatches_layered_renderer" type="Magento\Swatches\Model\Plugin\FilterRenderer" sortOrder="1" disabled="true"/>
+        <plugin name="sd_ajaxlayerednav" type="SomethingDigital\AjaxLayeredNav\Model\Plugin\Swatches\FilterRendererPlugin" sortOrder="1"/>
+    </type>
 </config>
