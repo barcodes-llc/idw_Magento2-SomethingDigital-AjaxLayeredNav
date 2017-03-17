@@ -7,10 +7,9 @@ define([
     function retrieveUrl($element) {
         if ($element.is('a')) {
             return $element.attr('href');
-        } else if ($element.is('input')) {
+        } else {
             return $element.data('href');
         }
-        return null;
     };
     var ajaxList = {
         bindAjaxUpdate: function(e) {
