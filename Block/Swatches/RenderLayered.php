@@ -9,6 +9,12 @@ use Magento\Eav\Model\Entity\Attribute\Option;
 class RenderLayered extends RenderLayeredBase
 {
     /**
+     * Prepare filter option data
+     *
+     * Override to mark selected filter options with class 'selected' and use correct URL which support multiselecting.
+     * This class does not overrides original class directly via di.xml.
+     * Check SomethingDigital\AjaxLayeredNav\Model\Plugin\Swatches\FilterRendererPlugin for more details.
+     *
      * @param FilterItem $filterItem
      * @param Option $swatchOption
      * @return array
@@ -16,7 +22,10 @@ class RenderLayered extends RenderLayeredBase
     protected function getOptionViewData(FilterItem $filterItem, Option $swatchOption)
     {
         $customStyle = '';
-        $linkToOption = $this->buildUrl($this->eavAttribute->getAttributeCode(), $filterItem->getValue());
+        $linkToOption = $filterItem->getUrl();
+        if ($filterItem->getIsActive()) {
+            $customStyle = 'selected';
+        }
         if ($this->isOptionDisabled($filterItem)) {
             $customStyle = 'disabled';
             $linkToOption = 'javascript:void();';
