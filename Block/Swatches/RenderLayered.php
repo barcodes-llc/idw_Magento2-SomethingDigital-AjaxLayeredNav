@@ -41,7 +41,8 @@ class RenderLayered extends RenderLayeredBase
         return [
             'label' => $swatchOption->getLabel(),
             'link' => $linkToOption,
-            'custom_style' => $customStyle
+            'custom_style' => $customStyle,
+            'id' => $filterItem->getId()
         ];
     }
 }
