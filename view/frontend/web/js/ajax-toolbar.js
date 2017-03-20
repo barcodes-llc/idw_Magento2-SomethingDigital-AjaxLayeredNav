@@ -18,7 +18,7 @@ define([
             }
             element.data('bound', true);
         },
-        changeUrl: function (paramName, paramValue, defaultValue) {
+        changeUrl: function (paramName, paramValue, defaultValue, focusData) {
             var decode = window.decodeURIComponent;
             var urlPaths = this.options.url.split('?'),
                 baseUrl = urlPaths[0],
@@ -37,8 +37,35 @@ define([
             }
             paramData = $.param(paramData);
 
-            ajaxList.updateContent(baseUrl + (paramData.length ? '?' + paramData : ''));
-        }
+            ajaxList.updateContent(baseUrl + (paramData.length ? '?' + paramData : ''), focusData);
+        },
+        _processLink: function (event) {
+            event.preventDefault();
+            var focusData = {
+                eventSourceId: $(event.currentTarget).attr('id'),
+                eventSourceAreaId: 'product-listing',
+                focusTarget: 'product'
+            };
+            this.changeUrl(
+                event.data.paramName,
+                $(event.currentTarget).data('value'),
+                event.data.default,
+                focusData
+            );
+        },
+        _processSelect: function (event) {
+            var focusData = {
+                eventSourceId: $(event.currentTarget).attr('id'),
+                eventSourceAreaId: 'product-listing',
+                focusTarget: ($(event.currentTarget).attr('id') == 'sorter') ? 'self' : 'product'
+            };
+            this.changeUrl(
+                event.data.paramName,
+                event.currentTarget.options[event.currentTarget.selectedIndex].value,
+                event.data.default,
+                focusData
+            );
+        },
     });
 
     return $.mage.sdProductListAjaxToolbarForm;
