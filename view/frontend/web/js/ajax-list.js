@@ -7,10 +7,9 @@ define([
     function retrieveUrl($element) {
         if ($element.is('a')) {
             return $element.attr('href');
-        } else if ($element.is('input')) {
+        } else {
             return $element.data('href');
         }
-        return null;
     };
     var ajaxList = {
         bindAjaxUpdate: function(e) {
@@ -19,13 +18,28 @@ define([
                 return true;
             }
             var url = retrieveUrl($this);
-            ajaxList.updateContent(url);
+            var focusData = {};
+            if ($this.parents('#layered-filter-block').length) {
+                focusData = {
+                    eventSourceId: $this.attr('id'),
+                    eventSourceAreaId: 'layered-filter-block',
+                    focusTarget: 'self'
+                };
+            } else {
+                focusData = {
+                    eventSourceId: $this.attr('id'),
+                    eventSourceAreaId: 'product-listing',
+                    focusTarget: 'product'
+                };
+            }
+            ajaxList.updateContent(url, focusData);
             if ($this.is('a')) {
                 return false;
             }
             return true;
         },
-        updateContent: function(url) {
+        updateContent: function(url, focusData) {
+            var self = this;
             var data = '';
             if (url.indexOf('?') > 0) {
                 var urlParts = url.split('?');
@@ -41,9 +55,7 @@ define([
                 url: url,
                 data: data,
                 cache: true,
-                complete: function() {
-                    // hide loader
-                },
+                showLoader: true,
                 success: function(data) {
                     if (data.product_list && data.filters) {
                         $('#product-listing').html($('<div>').html(data.product_list).find('#product-listing').html());
@@ -51,14 +63,38 @@ define([
                         // custom event after updating product list content via ajax
                         $(document).trigger('ajaxProductListUpdated');
                         $('#layered-filter-block').trigger('contentUpdated');
+
+                        if (focusData.eventSourceAreaId == 'product-listing') {
+                            self.setFocus(focusData);
+                        } else {
+                            $('#layered-filter-block .filter-options-item').collapsible({created: function(event) {
+                                if (focusData.eventSourceId && $(this).find('#' + focusData.eventSourceId).length) {
+                                    self.setFocus(focusData);
+                                }
+                            }});
+                        }
                     } else {
-                        // show error or refresh page
+                        location.reload();
                     }
                 },
                 error: function() {
-                    // refresh page
+                    location.reload();
                 }
             });
+        },
+        setFocus: function(focusData) {
+            if (focusData.focusTarget == 'product') {
+                $('body').addClass('_keyfocus');
+                $('#' + focusData.eventSourceAreaId + ' .product-item-info:first').addClass('active')
+                    .find('.product-item-link:first').focus();
+            } else {
+                var $item = $('#' + focusData.eventSourceAreaId + ' #' + focusData.eventSourceId);
+                var $filter = $item.parents('.filter-options-item');
+                if ($filter.length == 1) {
+                    $filter.collapsible('activate');
+                }
+                $item.focus();
+            }
         }
     };
     return ajaxList;
