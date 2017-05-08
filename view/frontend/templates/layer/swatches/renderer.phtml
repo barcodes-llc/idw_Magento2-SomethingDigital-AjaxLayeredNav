@@ -14,7 +14,7 @@
      attribute-id="<?php /* @escapeNotVerified */ echo $swatchData['attribute_id'] ?>">
     <div class="swatch-attribute-options clearfix">
         <?php foreach ($swatchData['options'] as $option => $label): ?>
-            <span id="<?php /* @escapeNotVerified */ echo $label['id'] ?>"
+            <button type="button" id="<?php /* @escapeNotVerified */ echo $label['id'] ?>"
                data-href="<?php /* @escapeNotVerified */ echo $label['link'] ?>"
                aria-label="<?php /* @escapeNotVerified */ echo $label['label'] ?>"
                class="swatch-option-link-layered" tabindex="0">
@@ -71,7 +71,7 @@
                             <?php    break;
                     } ?>
                 <?php } ?>
-            </span>
+            </button>
         <?php endforeach; ?>
     </div>
 </div>
