@@ -7,6 +7,7 @@
     <preference for="Magento\CatalogSearch\Model\Layer\Filter\Category" type="SomethingDigital\AjaxLayeredNav\Model\Layer\Filter\Category" />
     <preference for="Magento\CatalogSearch\Model\Layer\Filter\Decimal" type="SomethingDigital\AjaxLayeredNav\Model\Layer\Filter\Decimal" />
     <preference for="Magento\CatalogSearch\Model\Layer\Filter\Price" type="SomethingDigital\AjaxLayeredNav\Model\Layer\Filter\Price" />
+    <preference for="Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection" type="SomethingDigital\AjaxLayeredNav\Model\ResourceModel\CatalogSearch\Fulltext\Collection" />
 
     <type name="Magento\Framework\Search\Adapter\Mysql\Filter\Builder\Range">
         <plugin name="sd_ajaxlayerednav-range" type="SomethingDigital\AjaxLayeredNav\Model\Plugin\Mysql\RangeBuilderPlugin" />
