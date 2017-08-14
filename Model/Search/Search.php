@@ -51,6 +51,11 @@ class Search implements SearchInterface
     protected $ajaxConfig;
 
     /**
+     * @var array
+     */
+    protected $attributeCodesToSkip = [];
+
+    /**
      * @param BuilderFactory $requestBuilderFactory
      * @param ScopeResolverInterface $scopeResolver
      * @param SearchEngineInterface $searchEngine
@@ -74,6 +79,18 @@ class Search implements SearchInterface
         $this->aggregationFactory = $aggregationFactory;
         $this->queryResponseFactory = $queryResponseFactory;
         $this->ajaxConfig = $ajaxConfig;
+    }
+
+    /**
+     * Set attribute codes which will be skipped during retrieving aggregation data
+     *
+     * @param array $attribueCodes
+     * @return \SomethingDigital\AjaxLayeredNav\Model\Search\Search
+     */
+    public function setAttributeCodesToSkip($attribueCodes)
+    {
+        $this->attributeCodesToSkip = $attribueCodes;
+        return $this;
     }
 
     /**
@@ -165,6 +182,9 @@ class Search implements SearchInterface
         // prepare partial search responses for each active applied filter
         foreach ($filterFileldNames as $currentFilterField) {
             if (in_array($currentFilterField, $permanentFilterFields)) {
+                continue;
+            }
+            if (in_array($currentFilterField, $this->attributeCodesToSkip)) {
                 continue;
             }
 
