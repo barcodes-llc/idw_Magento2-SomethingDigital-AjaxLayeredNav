@@ -343,9 +343,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             'e.entity_id = search_result.' . TemporaryStorage::FIELD_ENTITY_ID,
             []
         );
-
-        $this->_totalRecords = $this->searchResult->getTotalCount();
-
+        
         if ($this->order && 'relevance' === $this->order['field']) {
             $this->getSelect()->order('search_result.'. TemporaryStorage::FIELD_SCORE . ' ' . $this->order['dir']);
         }
