@@ -86,6 +86,10 @@ class Category extends CategoryBase
             $this->coreRegistry->register('current_category_filter', $category);
         }
 
+        // register the subcategory filters. if no subcategories are selected this will just be
+        // the current category id.
+        $this->coreRegistry->register('filter_category_ids', array_keys($categories));
+
         if (count($categories) == 1) {
             $this->getLayer()->getProductCollection()->addCategoryFilter(current($categories));
         } elseif (count($categories) > 1) {

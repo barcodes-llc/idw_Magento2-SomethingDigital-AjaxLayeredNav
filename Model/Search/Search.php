@@ -12,6 +12,7 @@ use Magento\Framework\Search\ResponseInterface;
 use Magento\Framework\Search\Response\AggregationFactory;
 use Magento\Framework\Search\Response\QueryResponseFactory;
 use SomethingDigital\AjaxLayeredNav\Model\ConfigInterface;
+use Magento\Framework\Registry;
 
 class Search implements SearchInterface
 {
@@ -56,6 +57,11 @@ class Search implements SearchInterface
     protected $attributeCodesToSkip = [];
 
     /**
+     * @var Registry
+     */
+    protected $registry;
+
+    /**
      * @param BuilderFactory $requestBuilderFactory
      * @param ScopeResolverInterface $scopeResolver
      * @param SearchEngineInterface $searchEngine
@@ -70,7 +76,8 @@ class Search implements SearchInterface
         SearchResponseBuilder $searchResponseBuilder,
         AggregationFactory $aggregationFactory,
         QueryResponseFactory $queryResponseFactory,
-        ConfigInterface $ajaxConfig
+        ConfigInterface $ajaxConfig,
+        Registry $registry
     ) {
         $this->requestBuilderFactory = $requestBuilderFactory;
         $this->scopeResolver = $scopeResolver;
@@ -79,6 +86,7 @@ class Search implements SearchInterface
         $this->aggregationFactory = $aggregationFactory;
         $this->queryResponseFactory = $queryResponseFactory;
         $this->ajaxConfig = $ajaxConfig;
+        $this->registry = $registry;
     }
 
     /**
@@ -125,7 +133,16 @@ class Search implements SearchInterface
 
         foreach ($searchCriteria->getFilterGroups() as $filterGroup) {
             foreach ($filterGroup->getFilters() as $filter) {
-                $this->addFieldToRequestBuilder($requestBuilder, $filter->getField(), $filter->getValue());
+                if ($filter->getField() === 'category_ids') {
+                    if (count($this->registry->registry('filter_category_ids')) > 1) {
+                        $filterCategoryIds = $this->registry->registry('filter_category_ids');
+                    } else {
+                        $filterCategoryIds = $filter->getValue();
+                    }
+                    $this->addFieldToRequestBuilder($requestBuilder, $filter->getField(), $filterCategoryIds);
+                } else {
+                    $this->addFieldToRequestBuilder($requestBuilder, $filter->getField(), $filter->getValue());
+                }
             }
         }
 
@@ -163,7 +180,6 @@ class Search implements SearchInterface
                 // for 'category_ids' filter from layered navigation
                 if (!$defaultCategoryFilterValue && $filter->getField() === 'category_ids') {
                     $defaultCategoryFilterValue = $filter->getValue();
-                    continue;
                 }
                 // We need only real field name because price (and decimal fields) can have 2 filter objects with 
                 // fields like 'price.from' and 'price.to'. In fact it is single filter by price.
@@ -201,6 +217,10 @@ class Search implements SearchInterface
                 if (str_replace(['.from', '.to'], '', $filter->getField()) == $currentFilterField) {
                     if ($filter->getField() === 'category_ids') {
                         $this->addFieldToRequestBuilder($requestBuilder, 'category_ids', $defaultCategoryFilterValue);
+                    } elseif (count($this->registry->registry('filter_category_ids')) > 1) {
+                        // we need to apply multiple subcategory filters, if present, to partial queries
+                        // to make sure filter item counts are correct on merge.
+                        $this->addFieldToRequestBuilder($requestBuilder, 'category_ids', $this->registry->registry('filter_category_ids'));
                     }
                     continue;
                 }
