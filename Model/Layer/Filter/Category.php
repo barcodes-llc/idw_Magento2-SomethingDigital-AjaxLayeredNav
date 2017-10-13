@@ -5,11 +5,17 @@ namespace SomethingDigital\AjaxLayeredNav\Model\Layer\Filter;
 use Magento\CatalogSearch\Model\Layer\Filter\Category as CategoryBase;
 use Magento\Framework\Registry;
 use SomethingDigital\AjaxLayeredNav\Model\ConfigInterface;
+use Magento\Framework\App\Request\Http;
 
 class Category extends CategoryBase
 {
+    const SEARCH_ACTION_NAME = 'catalogsearch_result_index';
+
     protected $ajaxConfig = null;
+
     protected $coreRegistry = null;
+
+    protected $request;
 
     /**
      * @var \Magento\Catalog\Model\Layer\Filter\DataProvider\Category
@@ -25,6 +31,7 @@ class Category extends CategoryBase
         \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $categoryDataProviderFactory,
         Registry $coreRegistry,
         ConfigInterface $ajaxConfig,
+        Http $request,
         array $data = []
     ) {
         parent::__construct(
@@ -39,6 +46,7 @@ class Category extends CategoryBase
         $this->ajaxConfig = $ajaxConfig;
         $this->coreRegistry = $coreRegistry;
         $this->dataProvider = $categoryDataProviderFactory->create(['layer' => $this->getLayer()]);
+        $this->request = $request;
     }
 
     /**
@@ -93,7 +101,14 @@ class Category extends CategoryBase
         if (count($categories) == 1) {
             $this->getLayer()->getProductCollection()->addCategoryFilter(current($categories));
         } elseif (count($categories) > 1) {
-            $this->getLayer()->getProductCollection()->addCategoriesFilter(['in' => array_keys($categories)]);
+            if ($this->request->getFullActionName() === self::SEARCH_ACTION_NAME) {
+                $this->getLayer()->getProductCollection()->addFieldToFilter(
+                    'category_ids',
+                    $this->_storeManager->getStore()->getRootCategoryId()
+                );
+            } else {
+                $this->getLayer()->getProductCollection()->addCategoriesFilter(['in' => array_keys($categories)]);
+            }
         }
 
         return $this;
