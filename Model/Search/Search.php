@@ -13,10 +13,13 @@ use Magento\Framework\Search\Response\AggregationFactory;
 use Magento\Framework\Search\Response\QueryResponseFactory;
 use SomethingDigital\AjaxLayeredNav\Model\ConfigInterface;
 use Magento\Framework\Registry;
+use Magento\Framework\App\Request\Http;
 use Magento\Store\Model\StoreManagerInterface;
 
 class Search implements SearchInterface
 {
+    const SEARCH_ACTION_NAME = 'catalogsearch_result_index';
+
     /**
      * @var BuilderFactory
      */
@@ -68,6 +71,11 @@ class Search implements SearchInterface
     protected $storeManager;
 
     /**
+     * @var Http
+     */
+    protected $request;
+
+    /**
      * @param BuilderFactory $requestBuilderFactory
      * @param ScopeResolverInterface $scopeResolver
      * @param SearchEngineInterface $searchEngine
@@ -77,6 +85,7 @@ class Search implements SearchInterface
      * @param ConfigInterface $ajaxConfig
      * @param Registry $registry
      * @param StoreManagerInterface $storeManager
+     * @param Http $request
      */
     public function __construct(
         BuilderFactory $requestBuilderFactory,
@@ -87,7 +96,8 @@ class Search implements SearchInterface
         QueryResponseFactory $queryResponseFactory,
         ConfigInterface $ajaxConfig,
         Registry $registry,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        Http $request
     ) {
         $this->requestBuilderFactory = $requestBuilderFactory;
         $this->scopeResolver = $scopeResolver;
@@ -98,6 +108,7 @@ class Search implements SearchInterface
         $this->ajaxConfig = $ajaxConfig;
         $this->registry = $registry;
         $this->storeManager = $storeManager;
+        $this->request = $request;
     }
 
     /**
@@ -190,10 +201,10 @@ class Search implements SearchInterface
                 // We need to store default filter by current category to use it for filtering partial search request
                 // for 'category_ids' filter from layered navigation
                 if (!$defaultCategoryFilterValue && $filter->getField() === 'category_ids') {
-                    if ($this->registry->registry('current_category')) {
-                        $defaultCategoryFilterValue = $this->registry->registry('current_category')->getId();
-                    } else {
+                    if ($this->request->getFullActionName() === self::SEARCH_ACTION_NAME) {
                         $defaultCategoryFilterValue = $this->storeManager->getStore()->getRootCategoryId();
+                    } else {
+                        $defaultCategoryFilterValue = $filter->getValue();
                     }
                 }
                 // We need only real field name because price (and decimal fields) can have 2 filter objects with
