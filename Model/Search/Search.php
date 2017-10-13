@@ -13,6 +13,7 @@ use Magento\Framework\Search\Response\AggregationFactory;
 use Magento\Framework\Search\Response\QueryResponseFactory;
 use SomethingDigital\AjaxLayeredNav\Model\ConfigInterface;
 use Magento\Framework\Registry;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Search implements SearchInterface
 {
@@ -62,12 +63,20 @@ class Search implements SearchInterface
     protected $registry;
 
     /**
+     * @var StoreManagerInterface
+     */
+    protected $storeManager;
+
+    /**
      * @param BuilderFactory $requestBuilderFactory
      * @param ScopeResolverInterface $scopeResolver
      * @param SearchEngineInterface $searchEngine
      * @param SearchResponseBuilder $searchResponseBuilder
      * @param AggregationFactory $aggregationFactory
      * @param QueryResponseFactory $queryResponseFactory
+     * @param ConfigInterface $ajaxConfig
+     * @param Registry $registry
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         BuilderFactory $requestBuilderFactory,
@@ -77,7 +86,8 @@ class Search implements SearchInterface
         AggregationFactory $aggregationFactory,
         QueryResponseFactory $queryResponseFactory,
         ConfigInterface $ajaxConfig,
-        Registry $registry
+        Registry $registry,
+        StoreManagerInterface $storeManager
     ) {
         $this->requestBuilderFactory = $requestBuilderFactory;
         $this->scopeResolver = $scopeResolver;
@@ -87,6 +97,7 @@ class Search implements SearchInterface
         $this->queryResponseFactory = $queryResponseFactory;
         $this->ajaxConfig = $ajaxConfig;
         $this->registry = $registry;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -179,9 +190,13 @@ class Search implements SearchInterface
                 // We need to store default filter by current category to use it for filtering partial search request
                 // for 'category_ids' filter from layered navigation
                 if (!$defaultCategoryFilterValue && $filter->getField() === 'category_ids') {
-                    $defaultCategoryFilterValue = $filter->getValue();
+                    if ($this->registry->registry('current_category')) {
+                        $defaultCategoryFilterValue = $this->registry->registry('current_category')->getId();
+                    } else {
+                        $defaultCategoryFilterValue = $this->storeManager->getStore()->getRootCategoryId();
+                    }
                 }
-                // We need only real field name because price (and decimal fields) can have 2 filter objects with 
+                // We need only real field name because price (and decimal fields) can have 2 filter objects with
                 // fields like 'price.from' and 'price.to'. In fact it is single filter by price.
                 $realFieldName = str_replace(['.from', '.to'], '', $filter->getField());
                 $filterFileldNames[$realFieldName] = $realFieldName;

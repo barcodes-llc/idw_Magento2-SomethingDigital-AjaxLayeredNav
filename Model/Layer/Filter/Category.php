@@ -93,7 +93,14 @@ class Category extends CategoryBase
         if (count($categories) == 1) {
             $this->getLayer()->getProductCollection()->addCategoryFilter(current($categories));
         } elseif (count($categories) > 1) {
-            $this->getLayer()->getProductCollection()->addCategoriesFilter(['in' => array_keys($categories)]);
+            if (!$this->coreRegistry->registry('current_category')) {
+                $this->getLayer()->getProductCollection()->addFieldToFilter(
+                    'category_ids',
+                    $this->_storeManager->getStore()->getRootCategoryId()
+                );
+            } else {
+                $this->getLayer()->getProductCollection()->addCategoriesFilter(['in' => array_keys($categories)]);
+            }
         }
 
         return $this;
