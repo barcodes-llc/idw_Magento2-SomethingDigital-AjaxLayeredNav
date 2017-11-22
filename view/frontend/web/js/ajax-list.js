@@ -62,8 +62,13 @@ define([
                         $('#layered-filter-block').html($('<div>').html(data.filters).find('#layered-filter-block').html());
                         // custom event after updating product list content via ajax
                         $(document).trigger('ajaxProductListUpdated');
-                        $('#layered-filter-block').trigger('contentUpdated');
-
+                        if ($('#layered-filter-block').length > 0) {
+                            $('#layered-filter-block').trigger('contentUpdated');
+                        } else { 
+                            $('#product-listing').trigger('contentUpdated');
+                        }
+                        
+                        
                         if (focusData.eventSourceAreaId == 'product-listing') {
                             self.setFocus(focusData);
                         } else {
