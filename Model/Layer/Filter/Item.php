@@ -89,6 +89,14 @@ class Item extends ItemBase
             if ($value) {
                 $filterValueArray = explode(',', $value);
                 foreach ($filterValueArray as $key => $filterValue) {
+                    $thisValue = $this->getValue();
+                    if (is_array($thisValue)) {
+                        // Prices and decimals use ranges that need to be removed by range.
+                        $hyphenValue = implode("-", $thisValue);
+                        if ($filterValue == $hyphenValue) {
+                            unset($filterValueArray[$key]);
+                        }
+                    }
                     if ($filterValue == $this->getValue()) {
                         unset($filterValueArray[$key]);
                     }
