@@ -41,6 +41,8 @@ define([
         updateContent: function(url, focusData) {
             var self = this;
             var data = '';
+            var historyUrl = url.replace('?is_ajax=1', '');
+
             if (url.indexOf('?') > 0) {
                 var urlParts = url.split('?');
                 url = urlParts[0];
@@ -78,6 +80,8 @@ define([
                                 }
                             }});
                         }
+
+                        window.history.replaceState({}, '', historyUrl);
                     } else {
                         location.reload();
                     }
