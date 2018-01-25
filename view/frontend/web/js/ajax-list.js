@@ -41,7 +41,7 @@ define([
         updateContent: function(url, focusData) {
             var self = this;
             var data = '';
-            var historyUrl = url.replace('?is_ajax=1', '');
+            var historyUrl = url.replace('?is_ajax=1', '').replace('&is_ajax=1', '');
 
             if (url.indexOf('?') > 0) {
                 var urlParts = url.split('?');
