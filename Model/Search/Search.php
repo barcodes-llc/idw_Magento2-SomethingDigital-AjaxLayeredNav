@@ -2,7 +2,6 @@
 
 namespace SomethingDigital\AjaxLayeredNav\Model\Search;
 
-use Magento\Framework\Api\Search\SearchInterface;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
 use Magento\Framework\App\ScopeResolverInterface;
 use SomethingDigital\AjaxLayeredNav\Model\Search\Request\BuilderFactory;
@@ -14,6 +13,7 @@ use Magento\Framework\Search\Response\QueryResponseFactory;
 use SomethingDigital\AjaxLayeredNav\Model\ConfigInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\App\Request\Http;
+use Magento\Search\Api\SearchInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
 class Search implements SearchInterface
