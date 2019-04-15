@@ -2,16 +2,16 @@
   "name": "somethingdigital/magento2-ajaxlayerednav",
   "description": "Allow multiselection for filters using ajax.",
   "require": {
-    "php": ">= 5.6.0 <7.2.0",
-    "magento/framework": "100.1.*||101.0.*",
-    "magento/module-catalog": "^101.0.0||102.0.*",
-    "magento/module-catalog-search": "^100.1.0||100.2.*",
-    "magento/module-search": "100.1.*||100.2.*",
-    "magento/module-elasticsearch": "^100.1.0",
+    "php": ">= 5.6.0 <7.3.0",
+    "magento/framework": "100.1.*||101.0.*||102.0.*",
+    "magento/module-catalog": "^101.0.0||102.0.*||103.0.*",
+    "magento/module-catalog-search": "^100.1.0||100.2.*||101.0.*",
+    "magento/module-search": "100.1.*||100.2.*||101.0.*",
+    "magento/module-elasticsearch": "^100.1.0||100.3.*",
     "magento/module-solr": "^100.1.0"
   },
   "type": "magento2-module",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "license": "proprietary",
   "autoload": {
     "files": [
