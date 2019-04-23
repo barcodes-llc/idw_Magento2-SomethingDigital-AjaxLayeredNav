@@ -9,4 +9,4 @@ This module adjusts the layered navigation in two ways:
 
  * Magento 2.1.x
  * PHP 5.6 or 7.0
- * Solr, Elasticsearch, MySQL backends
+ * Elasticsearch, MySQL backends
