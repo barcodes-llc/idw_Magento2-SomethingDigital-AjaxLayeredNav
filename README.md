@@ -7,6 +7,6 @@ This module adjusts the layered navigation in two ways:
 
 ## Compatibility
 
- * Magento 2.1.x
- * PHP 5.6 or 7.0
- * Solr, Elasticsearch, MySQL backends
+ * Magento 2.1.x, 2.2.x, 2.3.x
+ * PHP 5.6, 7.0, 7.1
+ * Elasticsearch, MySQL backends

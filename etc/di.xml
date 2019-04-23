@@ -15,9 +15,6 @@
     <type name="Magento\Elasticsearch\SearchAdapter\Filter\Builder\Range">
         <plugin name="sd_ajaxlayerednav-range" type="SomethingDigital\AjaxLayeredNav\Model\Plugin\Elasticsearch\RangeBuilderPlugin" />
     </type>
-    <type name="Magento\Solr\SearchAdapter\Filter\Builder\Range">
-        <plugin name="sd_ajaxlayerednav-range" type="SomethingDigital\AjaxLayeredNav\Model\Plugin\Solr\RangeBuilderPlugin" />
-    </type>
     <type name="Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection">
         <plugin name="sd_ajaxlayerednav" type="SomethingDigital\AjaxLayeredNav\Model\Plugin\CatalogSearch\ResourceModel\Fulltext\CollectionPlugin" />
     </type>
