@@ -156,7 +156,8 @@ class Search implements SearchInterface
         foreach ($searchCriteria->getFilterGroups() as $filterGroup) {
             foreach ($filterGroup->getFilters() as $filter) {
                 if ($filter->getField() === 'category_ids') {
-                    if (count($this->registry->registry('filter_category_ids')) > 1) {
+                    if ($this->registry->registry('filter_category_ids')
+                        && count($this->registry->registry('filter_category_ids')) > 1) {
                         $filterCategoryIds = $this->registry->registry('filter_category_ids');
                     } else {
                         $filterCategoryIds = $filter->getValue();
