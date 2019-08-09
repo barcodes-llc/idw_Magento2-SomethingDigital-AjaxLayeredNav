@@ -156,7 +156,8 @@ class Search implements SearchInterface
         foreach ($searchCriteria->getFilterGroups() as $filterGroup) {
             foreach ($filterGroup->getFilters() as $filter) {
                 if ($filter->getField() === 'category_ids') {
-                    if (count($this->registry->registry('filter_category_ids')) > 1) {
+                    if ($this->registry->registry('filter_category_ids')
+                        && count($this->registry->registry('filter_category_ids')) > 1) {
                         $filterCategoryIds = $this->registry->registry('filter_category_ids');
                     } else {
                         $filterCategoryIds = $filter->getValue();
@@ -238,15 +239,17 @@ class Search implements SearchInterface
                 $this->addFieldToRequestBuilder($requestBuilder, $permanentFilter->getField(), $permanentFilter->getValue());
             }
             foreach ($filters as $filter) {
+                $filterCategoryIds = $this->registry->registry('filter_category_ids');
+
                 // don't apply current filter
                 // in case current filter is 'category_ids' apply default filter by current category
                 if (str_replace(['.from', '.to'], '', $filter->getField()) == $currentFilterField) {
                     if ($filter->getField() === 'category_ids') {
                         $this->addFieldToRequestBuilder($requestBuilder, 'category_ids', $defaultCategoryFilterValue);
-                    } elseif (count($this->registry->registry('filter_category_ids')) > 1) {
+                    } elseif ($filterCategoryIds && count($filterCategoryIds) > 1) {
                         // we need to apply multiple subcategory filters, if present, to partial queries
                         // to make sure filter item counts are correct on merge.
-                        $this->addFieldToRequestBuilder($requestBuilder, 'category_ids', $this->registry->registry('filter_category_ids'));
+                        $this->addFieldToRequestBuilder($requestBuilder, 'category_ids', $filterCategoryIds);
                     }
                     continue;
                 }
