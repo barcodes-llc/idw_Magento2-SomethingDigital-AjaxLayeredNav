@@ -314,7 +314,7 @@ class Search implements SearchInterface
 
         $aggregations = $this->aggregationFactory->create(['buckets' => $buckets]);
         return $this->queryResponseFactory->create([
-            'total' => count($documents),
+            'total' => $generalSearchResponse->getTotal(),
             'documents' => $documents,
             'aggregations' => $aggregations
         ]);
