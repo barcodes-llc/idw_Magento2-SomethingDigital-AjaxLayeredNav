@@ -4,7 +4,7 @@ namespace SomethingDigital\AjaxLayeredNav\Model\Search;
 
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
 use Magento\Framework\App\ScopeResolverInterface;
-use SomethingDigital\AjaxLayeredNav\Model\Search\Request\BuilderFactory;
+use SomethingDigital\AjaxLayeredNav\Model\Search\Request\Builder;
 use Magento\Framework\Search\SearchEngineInterface;
 use Magento\Framework\Search\SearchResponseBuilder;
 use Magento\Framework\Search\ResponseInterface;
@@ -21,9 +21,9 @@ class Search implements SearchInterface
     const SEARCH_ACTION_NAME = 'catalogsearch_result_index';
 
     /**
-     * @var BuilderFactory
+     * @var Builder
      */
-    protected $requestBuilderFactory;
+    protected $requestBuilder;
 
     /**
      * @var ScopeResolverInterface
@@ -76,7 +76,7 @@ class Search implements SearchInterface
     protected $request;
 
     /**
-     * @param BuilderFactory $requestBuilderFactory
+     * @param Builder $requestBuilder
      * @param ScopeResolverInterface $scopeResolver
      * @param SearchEngineInterface $searchEngine
      * @param SearchResponseBuilder $searchResponseBuilder
@@ -88,7 +88,7 @@ class Search implements SearchInterface
      * @param Http $request
      */
     public function __construct(
-        BuilderFactory $requestBuilderFactory,
+        Builder $requestBuilder,
         ScopeResolverInterface $scopeResolver,
         SearchEngineInterface $searchEngine,
         SearchResponseBuilder $searchResponseBuilder,
@@ -99,7 +99,7 @@ class Search implements SearchInterface
         StoreManagerInterface $storeManager,
         Http $request
     ) {
-        $this->requestBuilderFactory = $requestBuilderFactory;
+        $this->requestBuilder = $requestBuilder;
         $this->scopeResolver = $scopeResolver;
         $this->searchEngine = $searchEngine;
         $this->searchResponseBuilder = $searchResponseBuilder;
@@ -147,7 +147,7 @@ class Search implements SearchInterface
      */
     protected function getGeneralSearchResponse(SearchCriteriaInterface $searchCriteria)
     {
-        $requestBuilder = $this->requestBuilderFactory->create();
+        $requestBuilder = $this->requestBuilder;
         $requestBuilder->setRequestName($searchCriteria->getRequestName());
 
         $scope = $this->scopeResolver->getScope()->getId();
@@ -171,6 +171,11 @@ class Search implements SearchInterface
 
         $requestBuilder->setFrom($searchCriteria->getCurrentPage() * $searchCriteria->getPageSize());
         $requestBuilder->setSize($searchCriteria->getPageSize());
+
+        if (method_exists($requestBuilder, 'setSort')) {
+            $requestBuilder->setSort($searchCriteria->getSortOrders());
+        }
+
         $generalRequest = $requestBuilder->create();
         return $this->searchEngine->search($generalRequest);
     }
@@ -179,7 +184,7 @@ class Search implements SearchInterface
      * Prepare partial search responses for each active applied filter
      *
      * Send search request for each active applied filter to get proper facet data for that filter. Each request for
-     * active applied filter includes all other filters except current. 
+     * active applied filter includes all other filters except current.
      *
      * @param SearchCriteriaInterface $searchCriteria
      * @return array
@@ -231,7 +236,7 @@ class Search implements SearchInterface
                 continue;
             }
 
-            $requestBuilder = $this->requestBuilderFactory->create();
+            $requestBuilder = $this->requestBuilder;
             $requestBuilder->setRequestName($searchCriteria->getRequestName());
             $requestBuilder->bindDimension('scope', $scope);
             // Add permanent filters. They don't depends on filter state in layered navigation
