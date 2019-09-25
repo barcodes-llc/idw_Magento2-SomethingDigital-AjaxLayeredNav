@@ -76,6 +76,19 @@ class Builder
     }
 
     /**
+     * Set sort.
+     *
+     * @param \Magento\Framework\Api\SortOrder[] $sort
+     * @return \Magento\Framework\Search\Request\Builder
+     * @since 102.0.2
+     */
+    public function setSort($sort)
+    {
+        $this->data['sort'] = $sort;
+        return $this;
+    }
+
+    /**
      * Bind dimension data by name
      *
      * @param string $name
@@ -154,11 +167,33 @@ class Builder
         }
 
         $data = $this->binder->bind($data, $this->data);
+        if (isset($this->data['sort'])) {
+            $data['sort'] = $this->prepareSorts($this->data['sort']);
+        }
         $data = $this->cleaner->clean($data);
 
         $this->clear();
 
         return $this->convert($data);
+    }
+
+    /**
+     * Prepare sort data for request.
+     *
+     * @param array $sorts
+     * @return array
+     */
+    private function prepareSorts(array $sorts)
+    {
+        $sortData = [];
+        foreach ($sorts as $sortField => $direction) {
+            $sortData[] = [
+                'field' => $sortField,
+                'direction' => $direction,
+            ];
+        }
+
+        return $sortData;
     }
 
     /**
@@ -193,17 +228,21 @@ class Builder
                 'filters' => $data['filters']
             ]
         );
+        $requestData = [
+            'name' => $data['query'],
+            'indexName' => $data['index'],
+            'from' => $data['from'],
+            'size' => $data['size'],
+            'query' => $mapper->getRootQuery(),
+            'dimensions' => $this->buildDimensions(isset($data['dimensions']) ? $data['dimensions'] : []),
+            'buckets' => $mapper->getBuckets()
+        ];
+        if (isset($data['sort'])) {
+            $requestData['sort'] = $data['sort'];
+        }
         return $this->objectManager->create(
             \Magento\Framework\Search\Request::class,
-            [
-                'name' => $data['query'],
-                'indexName' => $data['index'],
-                'from' => $data['from'],
-                'size' => $data['size'],
-                'query' => $mapper->getRootQuery(),
-                'dimensions' => $this->buildDimensions(isset($data['dimensions']) ? $data['dimensions'] : []),
-                'buckets' => $mapper->getBuckets()
-            ]
+            $requestData
         );
     }
 
