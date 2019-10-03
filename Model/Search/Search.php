@@ -170,7 +170,7 @@ class Search implements SearchInterface
         }
 
         $requestBuilder->setFrom($searchCriteria->getCurrentPage() * $searchCriteria->getPageSize());
-        $requestBuilder->setSize($searchCriteria->getPageSize());
+        $requestBuilder->setSize($searchCriteria->getPageSize() ? $searchCriteria->getPageSize() : null);
 
         if (method_exists($requestBuilder, 'setSort')) {
             $requestBuilder->setSort($searchCriteria->getSortOrders());
