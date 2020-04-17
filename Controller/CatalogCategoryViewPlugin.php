@@ -46,13 +46,7 @@ class CatalogCategoryViewPlugin
         if (!$this->ajaxConfig->enabled() || !$request->getParam('is_ajax') || !($page instanceof \Magento\Framework\View\Result\Page)) {
             return $page;
         }
-
-        if ($page->getLayout()->getBlock('category.products.list')) {
-            $productList = $page->getLayout()->getBlock('category.products.list')->toHtml();
-        } else {
-            $productList = '<div id="product-listing"></div>';
-        }
-
+        $productList = $page->getLayout()->getBlock('category.products.list')->toHtml();
         $filters = $page->getLayout()->getBlock('catalog.leftnav')->toHtml();
 
         $result = $this->resultFactory->create(ResultFactory::TYPE_JSON);
