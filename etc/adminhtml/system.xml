@@ -10,7 +10,7 @@
                 <field id="enable_seo_urls" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Use SEO friendly URLs</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Works only for the Category filter</comment>
+                    <comment>Works only for the Category filter. Can no longer filter multiple sub-categories from one parent</comment>
                 </field>
             </group>
         </section>
