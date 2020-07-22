@@ -72,9 +72,14 @@ class Item extends ItemBase
             $categoryId = $this->getValue();
             $category = $this->categoryRepository->get($categoryId, $this->storeManager->getStore()->getId());
             $categoryUrl = $category->getUrl();
+
+            $url = parent::getUrl();
+            $catRequestVar  = $this->getFilter()->getRequestVar();
+            parse_str(parse_url($url, PHP_URL_QUERY), $queryParams);
+            unset($queryParams[$currentRequestVar]);
+
+            $categoryUrl .= '?' . http_build_query($queryParams);
         }
-
-
 
         if ($value && $this->ajaxConfig->enabled()) {
             $filterValueArray = explode(',', $value);
