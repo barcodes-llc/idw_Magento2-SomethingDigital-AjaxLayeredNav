@@ -62,6 +62,11 @@ define([
                     if (data.product_list && data.filters) {
                         $('#product-listing').html($('<div>').html(data.product_list).find('#product-listing').html());
                         $('#layered-filter-block').html($('<div>').html(data.filters).find('#layered-filter-block').html());
+
+                        if (data.breadcrumbs && $('.breadcrumbs').length === 1) {
+                            $('.breadcrumbs').html($('<div>').html(data.breadcrumbs).find('.breadcrumbs').html());
+                        }
+                        
                         // custom event after updating product list content via ajax
                         $(document).trigger('ajaxProductListUpdated');
                         if ($('#layered-filter-block').length > 0) {

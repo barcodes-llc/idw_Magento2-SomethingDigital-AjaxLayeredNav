@@ -4,6 +4,7 @@
         <catalog>
             <layered_navigation>
                 <enable_multiselect_layer>0</enable_multiselect_layer>
+                <enable_seo_urls>1</enable_seo_urls>
             </layered_navigation>
         </catalog>
     </default>
