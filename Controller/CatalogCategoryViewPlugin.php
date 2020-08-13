@@ -49,8 +49,13 @@ class CatalogCategoryViewPlugin
         $productList = $page->getLayout()->getBlock('category.products.list')->toHtml();
         $filters = $page->getLayout()->getBlock('catalog.leftnav')->toHtml();
 
+        $breadcrumbs = '';
+        if ($this->ajaxConfig->enabledSeoUrls()) {
+            $breadcrumbs = $page->getLayout()->getBlock('breadcrumbs')->toHtml();
+        }
+
         $result = $this->resultFactory->create(ResultFactory::TYPE_JSON);
-        $result->setData(array('product_list' => $productList, 'filters' => $filters));
+        $result->setData(array('product_list' => $productList, 'filters' => $filters, 'breadcrumbs' => $breadcrumbs));
         return $result;
     }
 }

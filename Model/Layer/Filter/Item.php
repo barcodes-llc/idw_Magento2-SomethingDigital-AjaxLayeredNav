@@ -76,7 +76,7 @@ class Item extends ItemBase
             $url = parent::getUrl();
             $catRequestVar  = $this->getFilter()->getRequestVar();
             parse_str(parse_url($url, PHP_URL_QUERY), $queryParams);
-            unset($queryParams[$currentRequestVar]);
+            unset($queryParams[$catRequestVar]);
 
             $categoryUrl .= '?' . http_build_query($queryParams);
         }
