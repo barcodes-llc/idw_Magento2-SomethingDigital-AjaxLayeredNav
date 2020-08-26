@@ -17,11 +17,9 @@
                 <input class="filter-item-checkbox" name="<?= $filterItem->getId() ?>" id="<?= $filterItem->getId() ?>" data-href="<?= $block->escapeUrl($filterItem->getUrl()) ?>" type="checkbox"<?php if ($filterItem->getIsActive()): ?> checked="checked"<?php endif; ?>/>
                 <label for="<?= $filterItem->getId() ?>">
                     <?= /* @escapeNotVerified */ $filterItem->getLabel() ?>
-                    <?php if (!$filterItem->getIsActive()): ?>
-                        <?php if ($this->helper('\Magento\Catalog\Helper\Data')->shouldDisplayProductCountOnLayer()): ?>
-                            <span class="count"><?= /* @escapeNotVerified */ $filterItem->getCount()?><span class="filter-count-label">
-                                <?php if ($filterItem->getCount() == 1):?> <?= /* @escapeNotVerified */ __('item')?><?php else:?> <?= /* @escapeNotVerified */ __('items') ?><?php endif;?></span></span>
-                        <?php endif; ?>
+                    <?php if ($this->helper('\Magento\Catalog\Helper\Data')->shouldDisplayProductCountOnLayer()): ?>
+                        <span class="count"><?= /* @escapeNotVerified */ $filterItem->getCount()?><span class="filter-count-label">
+                            <?php if ($filterItem->getCount() == 1):?> <?= /* @escapeNotVerified */ __('item')?><?php else:?> <?= /* @escapeNotVerified */ __('items') ?><?php endif;?></span></span>
                     <?php endif; ?>
                 </label>
             <?php else:?>
