@@ -59,7 +59,7 @@ define([
                 cache: true,
                 showLoader: true,
                 success: function(data) {
-                    if (data.product_list && data.filters) {
+                    if (data.product_list) {
                         $('#product-listing').html($('<div>').html(data.product_list).find('#product-listing').html());
                         $('#layered-filter-block').html($('<div>').html(data.filters).find('#layered-filter-block').html());
                         // custom event after updating product list content via ajax
@@ -69,8 +69,7 @@ define([
                         } else { 
                             $('#product-listing').trigger('contentUpdated');
                         }
-                        
-                        
+
                         if (focusData.eventSourceAreaId == 'product-listing') {
                             self.setFocus(focusData);
                         } else {
