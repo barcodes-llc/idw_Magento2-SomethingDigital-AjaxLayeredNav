@@ -110,7 +110,13 @@ class CatalogSearchResultIndexPlugin
             $this->helper->checkNotes();
         }
         $page = $this->resultPageFactory->create();
-        $productList = $page->getLayout()->getBlock('search_result_list')->toHtml();
+
+        if ($page->getLayout()->getBlock('search_result_list')) {
+            $productList = $page->getLayout()->getBlock('search_result_list')->toHtml();
+        } else {
+            $productList = '<div id="product-listing"></div>';
+        }
+
         $filters = $page->getLayout()->getBlock('catalogsearch.leftnav')->toHtml();
 
         $result = $this->resultFactory->create(ResultFactory::TYPE_JSON);

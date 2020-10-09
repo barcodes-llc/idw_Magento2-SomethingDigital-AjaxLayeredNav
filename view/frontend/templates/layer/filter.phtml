@@ -1,5 +1,6 @@
 <?php
 // @codingStandardsIgnoreFile
+
 ?>
 <?php
 /**
@@ -13,23 +14,21 @@
     <?php foreach ($filterItems as $filterItem): ?>
         <li class="item">
             <?php if ($filterItem->getCount() > 0): ?>
-                <input class="filter-item-checkbox" name="<?php echo $filterItem->getId() ?>" id="<?php echo $filterItem->getId() ?>" data-href="<?php echo $block->escapeUrl($filterItem->getUrl()) ?>" type="checkbox"<?php if ($filterItem->getIsActive()): ?> checked="checked"<?php endif; ?>/>
-                <label for="<?php echo $filterItem->getId() ?>">
-                    <?php /* @escapeNotVerified */ echo $filterItem->getLabel() ?>
-                    <?php if (!$filterItem->getIsActive()): ?>
-                        <?php if ($this->helper('\Magento\Catalog\Helper\Data')->shouldDisplayProductCountOnLayer()): ?>
-                            <span class="count"><?php /* @escapeNotVerified */ echo $filterItem->getCount()?><span class="filter-count-label">
-                                <?php if ($filterItem->getCount() == 1):?> <?php /* @escapeNotVerified */ echo __('item')?><?php else:?> <?php /* @escapeNotVerified */ echo __('items') ?><?php endif;?></span></span>
-                        <?php endif; ?>
+                <input class="filter-item-checkbox" name="<?= $filterItem->getId() ?>" id="<?= $filterItem->getId() ?>" data-href="<?= $block->escapeUrl($filterItem->getUrl()) ?>" type="checkbox"<?php if ($filterItem->getIsActive()): ?> checked="checked"<?php endif; ?>/>
+                <label for="<?= $filterItem->getId() ?>">
+                    <?= /* @escapeNotVerified */ $filterItem->getLabel() ?>
+                    <?php if ($this->helper('\Magento\Catalog\Helper\Data')->shouldDisplayProductCountOnLayer()): ?>
+                        <span class="count"><?= /* @escapeNotVerified */ $filterItem->getCount()?><span class="filter-count-label">
+                            <?php if ($filterItem->getCount() == 1):?> <?= /* @escapeNotVerified */ __('item')?><?php else:?> <?= /* @escapeNotVerified */ __('items') ?><?php endif;?></span></span>
                     <?php endif; ?>
                 </label>
             <?php else:?>
-                <input class="filter-item-checkbox" name="<?php echo $filterItem->getId() ?>" id="<?php echo $filterItem->getId() ?>" type="checkbox" disabled="disabled"/>
-                <label for="<?php echo $filterItem->getId() ?>">
-                    <?php /* @escapeNotVerified */ echo $filterItem->getLabel() ?>
+                <input class="filter-item-checkbox" name="<?= $filterItem->getId() ?>" id="<?= $filterItem->getId() ?>" type="checkbox" disabled="disabled"/>
+                <label for="<?= $filterItem->getId() ?>">
+                    <?= /* @escapeNotVerified */ $filterItem->getLabel() ?>
                     <?php if ($this->helper('\Magento\Catalog\Helper\Data')->shouldDisplayProductCountOnLayer()): ?>
-                        <span class="count"><?php /* @escapeNotVerified */ echo $filterItem->getCount()?><span class="filter-count-label">
-                            <?php if ($filterItem->getCount() == 1):?><?php /* @escapeNotVerified */ echo __('item')?><?php else:?><?php /* @escapeNotVerified */ echo __('items') ?><?php endif;?></span></span>
+                        <span class="count"><?= /* @escapeNotVerified */ $filterItem->getCount() ?><span class="filter-count-label">
+                            <?php if ($filterItem->getCount() == 1):?> <?= /* @escapeNotVerified */ __('item') ?><?php else:?> <?= /* @escapeNotVerified */ __('items') ?><?php endif;?></span></span>
                     <?php endif; ?>
                 </label>
             <?php endif; ?>
