@@ -84,6 +84,15 @@ define([
                                 }
                             }});
                         }
+                        
+                        // reload requisition list components
+                        if($(".block-requisition-list").length > 0){
+                            $('.block-requisition-list').each(
+                                function(){
+                                    $(this).applyBindings()
+                                }
+                            );
+                        }
 
                         window.history.replaceState({}, '', historyUrl);
                     } else {
